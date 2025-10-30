@@ -37,6 +37,7 @@
       color: #0078d7;
       text-decoration: none;
       font-weight: 500;
+      word-break: break-all;
     }
     a:hover {
       text-decoration: underline;
@@ -53,6 +54,11 @@
       box-shadow: 0 1px 3px rgba(0,0,0,0.1);
       text-align: left;
     }
+    footer {
+      margin-top: 4rem;
+      font-size: 0.9rem;
+      color: #777;
+    }
   </style>
 </head>
 <body>
@@ -64,15 +70,43 @@
 
   <section>
     <h2>Available Files</h2>
-    <ul>
-      <li><a href="RC_Ai_IS_Logo.png" target="_blank">RC_Ai_IS_Logo.png</a></li>
-      <!-- Add more files below as needed -->
-      <!-- Example: <li><a href="brochure.pdf" target="_blank">brochure.pdf</a></li> -->
+    <ul id="fileList">
+      <li>Loading file list…</li>
     </ul>
   </section>
 
-  <footer style="margin-top:4rem; font-size:0.9rem; color:#777;">
-    © 2025 Resource Consultants | Hosted via GitHub Pages
-  </footer>
+  <footer>© 2025 Resource Consultants | Hosted via GitHub Pages</footer>
+
+  <script>
+    const username = "jgntx";
+    const repo = "weblinks";
+    const apiURL = `https://api.github.com/repos/${username}/${repo}/contents`;
+
+    async function loadFiles() {
+      const listEl = document.getElementById("fileList");
+      try {
+        const response = await fetch(apiURL);
+        const files = await response.json();
+        listEl.innerHTML = "";
+
+        files.forEach(file => {
+          if (file.type === "file" && file.name !== "index.html") {
+            const li = document.createElement("li");
+            const a = document.createElement("a");
+            a.href = `https://${username}.github.io/${repo}/${file.name}`;
+            a.textContent = file.name;
+            a.target = "_blank";
+            li.appendChild(a);
+            listEl.appendChild(li);
+          }
+        });
+      } catch (err) {
+        listEl.innerHTML = "<li>Error loading files. Please refresh.</li>";
+        console.error(err);
+      }
+    }
+
+    loadFiles();
+  </script>
 </body>
 </html>
